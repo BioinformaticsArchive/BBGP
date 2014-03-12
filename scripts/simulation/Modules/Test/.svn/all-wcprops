@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 36
+/svn/!svn/ver/161/trunk/Modules/Test
+END
+TFisher.pm
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/160/trunk/Modules/Test/TFisher.pm
+END
+TMaxCoverage.pm
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/71/trunk/Modules/Test/TMaxCoverage.pm
+END
+PileupParser.pm
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/71/trunk/Modules/Test/PileupParser.pm
+END
+TCMH.pm
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/71/trunk/Modules/Test/TCMH.pm
+END
+TSubsample.pm
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/71/trunk/Modules/Test/TSubsample.pm
+END
+TFstCalculation.pm
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/71/trunk/Modules/Test/TFstCalculation.pm
+END
+TSyncSlider.pm
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/161/trunk/Modules/Test/TSyncSlider.pm
+END
+TSynchronized.pm
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/161/trunk/Modules/Test/TSynchronized.pm
+END

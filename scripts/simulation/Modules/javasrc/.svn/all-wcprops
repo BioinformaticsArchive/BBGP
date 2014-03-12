@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 39
+/svn/!svn/ver/176/trunk/Modules/javasrc
+END
+QualityEncoding.java
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/168/trunk/Modules/javasrc/QualityEncoding.java
+END
+Mpileup2syncMain.java
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/168/trunk/Modules/javasrc/Mpileup2syncMain.java
+END
+BatchProcessor.java
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/176/trunk/Modules/javasrc/BatchProcessor.java
+END
+CommandLineParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/169/trunk/Modules/javasrc/CommandLineParser.java
+END
+SyncLine.java
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/168/trunk/Modules/javasrc/SyncLine.java
+END
+BatchReader.java
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/169/trunk/Modules/javasrc/BatchReader.java
+END
+LogFormatter.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/168/trunk/Modules/javasrc/LogFormatter.java
+END
+Mpileup2SyncFramework.java
+K 25
+svn:wc:ra_dav:version-url
+V 66
+/svn/!svn/ver/176/trunk/Modules/javasrc/Mpileup2SyncFramework.java
+END
+MpileupParser.java
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/169/trunk/Modules/javasrc/MpileupParser.java
+END
+SyncPop.java
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/168/trunk/Modules/javasrc/SyncPop.java
+END
+SyncFormater.java
+K 25
+svn:wc:ra_dav:version-url
+V 57
+/svn/!svn/ver/168/trunk/Modules/javasrc/SyncFormater.java
+END
+BatchWriter.java
+K 25
+svn:wc:ra_dav:version-url
+V 56
+/svn/!svn/ver/168/trunk/Modules/javasrc/BatchWriter.java
+END

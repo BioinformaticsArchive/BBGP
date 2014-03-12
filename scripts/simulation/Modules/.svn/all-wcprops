@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 31
+/svn/!svn/ver/185/trunk/Modules
+END
+FstAsymptUnbiased.pm
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/71/trunk/Modules/FstAsymptUnbiased.pm
+END
+FormatSNP.pm
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/71/trunk/Modules/FormatSNP.pm
+END
+MajorAlleles.pm
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/71/trunk/Modules/MajorAlleles.pm
+END
+Subsample.pm
+K 25
+svn:wc:ra_dav:version-url
+V 43
+/svn/!svn/ver/71/trunk/Modules/Subsample.pm
+END
+FstConventional.pm
+K 25
+svn:wc:ra_dav:version-url
+V 49
+/svn/!svn/ver/71/trunk/Modules/FstConventional.pm
+END
+Pileup.pm
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/185/trunk/Modules/Pileup.pm
+END
+FET.pm
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/180/trunk/Modules/FET.pm
+END
+Synchronized.pm
+K 25
+svn:wc:ra_dav:version-url
+V 47
+/svn/!svn/ver/180/trunk/Modules/Synchronized.pm
+END
+Test.pm
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/71/trunk/Modules/Test.pm
+END
+SynchronizeUtility.pm
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/180/trunk/Modules/SynchronizeUtility.pm
+END
+SyncSlider.pm
+K 25
+svn:wc:ra_dav:version-url
+V 45
+/svn/!svn/ver/180/trunk/Modules/SyncSlider.pm
+END
+MaxCoverage.pm
+K 25
+svn:wc:ra_dav:version-url
+V 46
+/svn/!svn/ver/178/trunk/Modules/MaxCoverage.pm
+END
