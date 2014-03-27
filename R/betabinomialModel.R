@@ -34,7 +34,7 @@ function(counts1,counts2,x) {
 		x=as.matrix(x[order_ind])
 	}
 
-	R=as.matrix(as.vector(table(x))) # number of replicates corresponding to time points in x_1
+	R=as.matrix(as.vector(table(x))) # number of replicates corresponding to time points in x
 
 	seq_dept=counts1+counts2
 	rising_allele_counts=counts1

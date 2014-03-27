@@ -25,56 +25,44 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 runSample <-
-function(dataFileName,L,timePoints,thr,pl=0) {
+function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 
-#################################################################################################
-##  											       ##
-## dataFileName: Name of the data file which contains the counts for bi-allelic SNPs.          ##
-## L: number of lines in data file, including the header line.                                 ##
-## timePoints: Vector containing the time points which will be used in GP models.              ##
-## thr: Threshold for the BF such that if BF>thr the plot will be created for the model fit.   ##
-##                                                                                             ##
-##                                                                                             ##
-## Examples usage for the sampleData:                                                          ##
-##                                                                                             ##
-## > runSample('sampleDataCounts',6,c(0,14,22,28,38,50,60))                                    ##
-## For also getting the GP model fit plots if Bayes Factor > thr :                             ##
-## > runSample('sampleDataCounts',6,c(0,14,22,28,38,50,60),thr)                                ##
-##                                                                                             ## 
-#################################################################################################
+####################################################################################################
+##  											          ##
+## dataFileName: Name of the data file which contains the counts for bi-allelic SNPs.             ##
+## L: number of lines in data file, including the header line.                                    ##
+## timePoints: Vector containing the time points which will be used in GP models.                 ##
+## thr: Threshold for the BF such that if BF>thr the plot will be created for the model fit.      ##
+##                                                                                                ##
+##                                                                                                ##
+## Example usage for the sampleData:                                                              ##   
+##                                                                                                ##
+## > data_path=paste(getwd(),"/data/",sep="")                                                     ##
+## > results_path=paste(getwd(),"/results/",sep="")                                               ##
+## > plots_path=paste(getwd(),"/plots/",sep="")                                                   ##
+##                                                                                                ##
+## > runSample(c(0,14,22,28,38,50,60),data_path,'sampleDataCounts',6,results_path)                ##
+## For also getting the GP model fit plots if Bayes Factor > thr :                                ##
+## > runSample(c(0,14,22,28,38,50,60),data_path,'sampleDataCounts',6,results_path,plots_path,thr) ##
+##                                                                                                ## 
+####################################################################################################
 
 	# Install gptk package:
-
 	install.packages("gptk") 
 	library("gptk")
+	# load BBGP functions:
+	source("loadBBGP.R")
+	loadBBGP()
 
-	#gptk_path=paste(getwd(),"/gptk/",sep="")  
-	#install.packages(pkgs="gptk_1.08.tar.gz",lib=gptk_path,repos=NULL,type="source") # Bug report was sent for the original gptk package. Until it is fixed, let's use our 'fixed' gptk package locally.
-	#library('gptk',lib.loc=gptk_path)
+	current_path=getwd()
 
-	source("fixedvarianceKernFunctions.R")
-	source("calculateLbound.R")
-	source("betabinomialModel.R")
-	source("bbgp_test.R")
-	source("constructModel.R")
-	source("getInitParams.R")
-	source("modelfitPlot.R")
-	source("readCountsData.R")
-
-	plots_path=paste(getwd(),"/plots/",sep="")
-	results_path=paste(getwd(),"/results/",sep="")
-	
-	if (nargs()>3) {
-		pl=1
-	}
-
-	setwd("data/")
+	setwd(data_path)
 	snpData=readCountsData(dataFileName,L) 
 	COUNTS1=snpData$allele1_counts
 	COUNTS2=snpData$allele2_counts
 	SNP_ID=snpData$SNP_ID
 	X=snpData$timeVector
- 	N=length(SNP_ID) # number of SNPs
+ 	N=length(SNP_ID) # number of SNPs in the data file
 
 	BayesFactors=matrix(0,N,1)	
 	SNP=matrix("",N,1)
@@ -98,7 +86,7 @@ function(dataFileName,L,timePoints,thr,pl=0) {
 		SNP[i]=SNP_ID[i]
 
 
-		if (pl==1) {
+		if (nargs()>5) {
 			if (BayesFactors[i] > thr) {
 				model0=rslt$independentModel
 				model1=rslt$dependentModel
@@ -115,5 +103,7 @@ function(dataFileName,L,timePoints,thr,pl=0) {
 	filename=paste(dataFileName,"_BBGPsummary",sep="")
 	setwd(results_path)
 	write.table(d,file=filename,quote=F,sep='\t',col.names=FALSE,row.names=FALSE)
+
+	setwd(current_path)
 
 }
