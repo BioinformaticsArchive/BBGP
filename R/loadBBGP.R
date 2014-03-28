@@ -9,5 +9,6 @@ function() {
 	source("getInitParams.R")
 	source("modelfitPlot.R")
 	source("readCountsData.R")
+	source("writeOutputFile.R")
 
 }

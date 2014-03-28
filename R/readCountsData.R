@@ -25,10 +25,11 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 readCountsData <-
-function(dataFileName,L,SNPinfoColumns=3) {
+function(data_path,dataFileName,L,SNPinfoColumns=3) {
 
 	# L: number of lines in the data file, including the header line.
  
+	setwd(data_path)
 	sample_data=read.table(dataFileName,nrows=L)
 	X=as.matrix(sample_data[1,][,-seq(1,SNPinfoColumns)])
 	X=as.matrix(as.numeric(X[1,]))

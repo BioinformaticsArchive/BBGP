@@ -38,12 +38,12 @@ function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 ## Example usage for the sampleData:                                                              ##   
 ##                                                                                                ##
 ## > data_path=paste(getwd(),"/data/",sep="")                                                     ##
-## > results_path=paste(getwd(),"/results/",sep="")                                               ##
+## > output_path=paste(getwd(),"/results/",sep="")                                               ##
 ## > plots_path=paste(getwd(),"/plots/",sep="")                                                   ##
 ##                                                                                                ##
-## > runSample(c(0,14,22,28,38,50,60),data_path,'sampleDataCounts',6,results_path)                ##
+## > runSample(c(0,14,22,28,38,50,60),data_path,'sampleDataCounts',6,output_path)                ##
 ## For also getting the GP model fit plots if Bayes Factor > thr :                                ##
-## > runSample(c(0,14,22,28,38,50,60),data_path,'sampleDataCounts',6,results_path,plots_path,thr) ##
+## > runSample(c(0,14,22,28,38,50,60),data_path,'sampleDataCounts',6,output_path,plots_path,thr) ##
 ##                                                                                                ## 
 ####################################################################################################
 
@@ -56,8 +56,7 @@ function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 
 	current_path=getwd()
 
-	setwd(data_path)
-	snpData=readCountsData(dataFileName,L) 
+	snpData=readCountsData(data_path,dataFileName,L) 
 	COUNTS1=snpData$allele1_counts
 	COUNTS2=snpData$allele2_counts
 	SNP_ID=snpData$SNP_ID
@@ -90,9 +89,8 @@ function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 			if (BayesFactors[i] > thr) {
 				model0=rslt$independentModel
 				model1=rslt$dependentModel
-				setwd(plots_path)
-				modelfitPlot(model0,SNP_ID[i])
-				modelfitPlot(model1,SNP_ID[i])
+				modelfitPlot(plots_path,model0,SNP_ID[i])
+				modelfitPlot(plots_path,model1,SNP_ID[i])
 			}	
 		}
 	
@@ -101,8 +99,7 @@ function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 	d=data.frame(SNP,BayesFactors)
 	names(d)=c("SNP_ID","Bayes Factor")
 	filename=paste(dataFileName,"_BBGPsummary",sep="")
-	setwd(results_path)
-	write.table(d,file=filename,quote=F,sep='\t',col.names=FALSE,row.names=FALSE)
+	writeOutputFile(output_path,d,filename)
 
 	setwd(current_path)
 

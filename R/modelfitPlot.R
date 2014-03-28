@@ -25,8 +25,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 modelfitPlot <-
-function(model,SNP_name) {
+function(plots_path,model,SNP_name) {
 
+	setwd(plots_path)	
 	x=model$X
 	y=model$y
 	no_of_kernels=length(model$kern$comp)
