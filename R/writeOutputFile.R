@@ -25,7 +25,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 writeOutputFile <-
-function(output_path,d,filename) {
-	setwd(output_path)
+function(filename,d) {
 	write.table(d,file=filename,quote=F,sep='\t',col.names=FALSE,row.names=FALSE)
 }

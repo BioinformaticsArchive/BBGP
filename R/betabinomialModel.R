@@ -25,28 +25,30 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 betabinomialModel <-
-function(counts1,counts2,x) {
+function(counts,seq_depth,x,rising=1) {
 
 	if (is.unsorted(x)==TRUE) {	
 		order_ind=order(x)
-		counts1=as.matrix(counts1[order_ind])
-		counts2=as.matrix(counts2[order_ind])
+		counts=as.matrix(counts[order_ind])
+		seq_depth=as.matrix(seq_depth[order_ind])
 		x=as.matrix(x[order_ind])
 	}
 
-	R=as.matrix(as.vector(table(x))) # number of replicates corresponding to time points in x
+	rising_allele_counts=counts
 
-	seq_dept=counts1+counts2
-	rising_allele_counts=counts1
-        if (mean(head((rising_allele_counts/seq_dept),R[1]))>mean(tail((rising_allele_counts/seq_dept),tail(R,1)))) { 
-           rising_allele_counts=seq_dept-rising_allele_counts # adjustment for choosing the rising allele
-        }	
+	if (rising==1) {
+		R=as.matrix(as.vector(table(x))) # number of replicates corresponding to time points in x
+
+	        if (mean(head((rising_allele_counts/seq_depth),R[1]))>mean(tail((rising_allele_counts/seq_depth),tail(R,1)))) { 
+	           rising_allele_counts=seq_depth-rising_allele_counts # adjustment for choosing the rising allele
+	        }	
+	}
 
 	alpha=1;
 	beta=1;
 
- 	y=(alpha+rising_allele_counts)/(alpha+beta+seq_dept)
-        v=((alpha+rising_allele_counts)*(1+seq_dept-rising_allele_counts))/((alpha+beta+seq_dept)^2*(alpha+beta+seq_dept+1))
+ 	y=(alpha+rising_allele_counts)/(alpha+beta+seq_depth)
+        v=((alpha+rising_allele_counts)*(1+seq_depth-rising_allele_counts))/((alpha+beta+seq_depth)^2*(alpha+beta+seq_depth+1))
         y=as.matrix(y)
 	v=as.matrix(v)
 

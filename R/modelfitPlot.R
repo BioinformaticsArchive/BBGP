@@ -26,7 +26,7 @@
 
 modelfitPlot <-
 function(plots_path,model,SNP_name) {
-
+	current_path=getwd()
 	setwd(plots_path)	
 	x=model$X
 	y=model$y
@@ -106,4 +106,5 @@ function(plots_path,model,SNP_name) {
 	axis(side = 2)
 	#box()
 	dev.off()
+	setwd(current_path)
 }

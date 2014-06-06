@@ -35,6 +35,10 @@ function (x,y,covarianceTypes,v) {
 		list_rbf=list(type="rbf",options=list(inverseWidthBounds=c(0,iw_bound)))
 		list_covTypes=append(list_covTypes,list(list_rbf))
 	}
+        if ("bias" %in% covarianceTypes) {
+                list_bias=list(type="bias")
+                list_covTypes=append(list_covTypes,list(list_bias))
+        }
         if ("white" %in% covarianceTypes) {
 		list_white=list(type="white")
 		list_covTypes=append(list_covTypes,list(list_white))

@@ -25,50 +25,53 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 readCountsData <-
-function(data_path,dataFileName,L,SNPinfoColumns=3) {
+function(dataFileName,start_line,end_line,NoHeaderLines=1,NoInfoColumns=3,NoOptions=6,sep=":") {
 
-	# L: number of lines in the data file, including the header line.
- 
-	setwd(data_path)
-	sample_data=read.table(dataFileName,nrows=L)
-	X=as.matrix(sample_data[1,][,-seq(1,SNPinfoColumns)])
-	X=as.matrix(as.numeric(X[1,]))
-	sample_data=sample_data[-1,]	
-	J=ncol(sample_data)-SNPinfoColumns # number of (time,rep) combinations in the data file.
-	SNP_ID=as.matrix(paste(as.character(sample_data[,1]),"_",as.character(sample_data[,2]),sep=""))
-	REF_ALLELES=as.matrix(as.character(sample_data[,3]))
-	COUNTS=as.matrix(sample_data[,-seq(1,SNPinfoColumns)])
+	headerLines=read.table(dataFileName,skip=0,nrows=NoHeaderLines)
+	X=as.matrix(as.numeric(headerLines[1,][,-seq(1,NoInfoColumns)]))
+  
+	noLines=end_line-start_line+1
+	noSkip=start_line+NoHeaderLines-1
 
-	allele1_counts=matrix(nrow=L-1,ncol=J)
-	allele2_counts=matrix(nrow=L-1,ncol=J)
-	for (i in 1:(L-1)) {
+	sample_data=read.table(dataFileName,skip=noSkip,nrows=noLines)
+
+	J=ncol(sample_data)-NoInfoColumns # number of (time,rep) combinations in the data file.
+
+	ID=as.matrix(paste(as.character(sample_data[,1]),"_",as.character(sample_data[,2]),sep=""))
+	#REF_ALLELES=as.matrix(as.character(sample_data[,3]))
+	COUNTS=as.matrix(sample_data[,-seq(1,NoInfoColumns)])
+
+	counts=matrix(nrow=noLines,ncol=J)
+	seq_depth=matrix(nrow=noLines,ncol=J)
+	for (i in 1:noLines) {
 		d=COUNTS[i,]
-		countsMatrix=matrix(nrow=6,ncol=J)
+		countsMatrix=matrix(nrow=NoOptions,ncol=J)
 		for (j in 1:J) {
 			d1=d[j]
-			s=as.matrix(as.numeric(unlist(strsplit(d1,":"))))
+			s=as.matrix(as.numeric(unlist(strsplit(d1,sep))))
 			countsMatrix[,j]=s
 		}
 		if (0 %in% colSums(countsMatrix)) {
-			print(sprintf("None of the alleles have been sequenced for the SNP on line %d, which results in zero sequencing depth. Check the data file.", i+1))
+			print(sprintf("None of the alleles have been sequenced for the SNP on line %d, which results in zero sequencing depth. Check the data file.", i+start_line-1))
 		} else {
 			ind_nonzero=unique(which(countsMatrix!=0,arr.ind=TRUE)[,1])
 			if (length(ind_nonzero)>2) {
-				print(sprintf("SNP on line %d is not bi-allelic. Check the data file.", i+1))
+				print(sprintf("SNP on line %d is not bi-allelic. Check the data file.", i+start_line-1))
 			} else {
 				allele_counts=countsMatrix[ind_nonzero,]
-				allele1_counts[i,]=allele_counts[1,]
+				counts[i,]=allele_counts[1,]
 				if (length(ind_nonzero)<2) {
-					allele2_counts[i,]=0	
+					seq_depth[i,]=counts[i,]+0	
 				} else {
-					allele2_counts[i,]=allele_counts[2,]
+					seq_depth[i,]=counts[i,]+allele_counts[2,]
 				}
 			} 
 		}
 	}
 
-	snpData=list("SNP_ID"=SNP_ID,"allele1_counts"=allele1_counts,"allele2_counts"=allele2_counts,"timeVector"=X)
+	snpData=list("ID"=ID,"counts"=counts,"seq_depth"=seq_depth,"timeVector"=X)
 	return(snpData)
 
 }
+
 

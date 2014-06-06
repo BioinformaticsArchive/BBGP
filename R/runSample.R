@@ -25,7 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 runSample <-
-function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
+function(timePoints,dataFileName,start_line,end_line,resultFileName,plots_path,thr=10) {
 
 ####################################################################################################
 ##  											          ##
@@ -37,18 +37,18 @@ function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 ##                                                                                                ##
 ## Example usage for the sampleData:                                                              ##   
 ##                                                                                                ##
-## > data_path=paste(getwd(),"/data/",sep="")                                                     ##
-## > output_path=paste(getwd(),"/results/",sep="")                                               ##
+## > dataFileName="data/sampleDataCounts"                                                         ##
+## > resultFileName="results/BBGP_summary"                                                        ##
 ## > plots_path=paste(getwd(),"/plots/",sep="")                                                   ##
 ##                                                                                                ##
-## > runSample(c(0,14,22,28,38,50,60),data_path,'sampleDataCounts',6,output_path)                ##
+## > runSample(c(0,14,22,28,38,50,60),dataFileName,1,5,resultFileName)                            ##
 ## For also getting the GP model fit plots if Bayes Factor > thr :                                ##
-## > runSample(c(0,14,22,28,38,50,60),data_path,'sampleDataCounts',6,output_path,plots_path,thr) ##
+## > runSample(c(0,14,22,28,38,50,60),dataFileName,1,5,resultFileName,plots_path,thr)             ##
 ##                                                                                                ## 
 ####################################################################################################
 
 	# Install gptk package:
-	install.packages("gptk") 
+	# install.packages("gptk") 
 	library("gptk")
 	# load BBGP functions:
 	source("loadBBGP.R")
@@ -56,10 +56,10 @@ function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 
 	current_path=getwd()
 
-	snpData=readCountsData(data_path,dataFileName,L) 
-	COUNTS1=snpData$allele1_counts
-	COUNTS2=snpData$allele2_counts
-	SNP_ID=snpData$SNP_ID
+	snpData=readCountsData(dataFileName,start_line,end_line)
+	COUNTS=snpData$counts
+	SEQ_DEPTH=snpData$seq_depth
+	SNP_ID=snpData$ID
 	X=snpData$timeVector
  	N=length(SNP_ID) # number of SNPs in the data file
 
@@ -73,9 +73,9 @@ function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 
 	for (i in 1:N) {
 
-		counts1=as.matrix(COUNTS1[i,ind_selectedTimePoints])
-		counts2=as.matrix(COUNTS2[i,ind_selectedTimePoints])
-		bb_model=betabinomialModel(counts1,counts2,X)
+		counts=as.matrix(COUNTS[i,ind_selectedTimePoints])
+		seq_depth=as.matrix(SEQ_DEPTH[i,ind_selectedTimePoints])
+		bb_model=betabinomialModel(counts,seq_depth,X)
 		x=bb_model$timeVector
 		y=bb_model$posteriorMean
 		v=bb_model$posteriorVariance
@@ -98,8 +98,7 @@ function(timePoints,data_path,dataFileName,L,results_path,plots_path,thr=10) {
 
 	d=data.frame(SNP,BayesFactors)
 	names(d)=c("SNP_ID","Bayes Factor")
-	filename=paste(dataFileName,"_BBGPsummary",sep="")
-	writeOutputFile(output_path,d,filename)
+	writeOutputFile(resultFileName,d)
 
 	setwd(current_path)
 
