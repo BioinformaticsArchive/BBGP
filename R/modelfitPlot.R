@@ -25,9 +25,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 modelfitPlot <-
-function(plots_path,model,SNP_name) {
-	current_path=getwd()
-	setwd(plots_path)	
+function(model,file_name) {
+	#current_path=getwd()
+	#setwd(plots_path)	
 	x=model$X
 	y=model$y
 	no_of_kernels=length(model$kern$comp)
@@ -41,7 +41,7 @@ function(plots_path,model,SNP_name) {
 		v=model$kern$comp[[ind_fixedvar_kern]]$fixedvariance
 	}
 
-	model_name=deparse(substitute(model))
+	#model_name=deparse(substitute(model))
 	K = model$K_uu
 	invK = model$invK_uu
 	xtest = matrix(seq(-0.5, tail(x,1)+0.5, length = 100), ncol = 1)
@@ -54,7 +54,7 @@ function(plots_path,model,SNP_name) {
 
 	library(Hmisc)
 	FONTSIZE <- 10
-	file_name=paste(SNP_name,"_",model_name,".pdf",sep="")
+	#file_name=paste(SNP_name,"_",model_name,".pdf",sep="")
 	pdf(file=file_name, width=86/25.4, height=70/25.4)
 	par(ps=FONTSIZE, cex=1)
 	par(mar=c(2, 2, 0, 0)+0.4)
@@ -106,5 +106,5 @@ function(plots_path,model,SNP_name) {
 	axis(side = 2)
 	#box()
 	dev.off()
-	setwd(current_path)
+	#setwd(current_path)
 }

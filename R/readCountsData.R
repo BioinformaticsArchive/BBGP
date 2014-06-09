@@ -29,7 +29,7 @@ function(dataFileName,start_line,end_line,NoHeaderLines=1,NoInfoColumns=3,NoOpti
 
 	headerLines=read.table(dataFileName,skip=0,nrows=NoHeaderLines)
 	X=as.matrix(as.numeric(headerLines[1,][,-seq(1,NoInfoColumns)]))
-  
+ 	
 	noLines=end_line-start_line+1
 	noSkip=start_line+NoHeaderLines-1
 
@@ -43,6 +43,7 @@ function(dataFileName,start_line,end_line,NoHeaderLines=1,NoInfoColumns=3,NoOpti
 
 	counts=matrix(nrow=noLines,ncol=J)
 	seq_depth=matrix(nrow=noLines,ncol=J)
+
 	for (i in 1:noLines) {
 		d=COUNTS[i,]
 		countsMatrix=matrix(nrow=NoOptions,ncol=J)
@@ -51,9 +52,9 @@ function(dataFileName,start_line,end_line,NoHeaderLines=1,NoInfoColumns=3,NoOpti
 			s=as.matrix(as.numeric(unlist(strsplit(d1,sep))))
 			countsMatrix[,j]=s
 		}
-		if (0 %in% colSums(countsMatrix)) {
-			print(sprintf("None of the alleles have been sequenced for the SNP on line %d, which results in zero sequencing depth. Check the data file.", i+start_line-1))
-		} else {
+#		if (0 %in% colSums(countsMatrix)) {
+#			print(sprintf("None of the alleles have been sequenced for the SNP on line %d, which results in zero sequencing depth. Check the data file.", i+start_line-1))
+#		} else {
 			ind_nonzero=unique(which(countsMatrix!=0,arr.ind=TRUE)[,1])
 			if (length(ind_nonzero)>2) {
 				print(sprintf("SNP on line %d is not bi-allelic. Check the data file.", i+start_line-1))
@@ -67,7 +68,7 @@ function(dataFileName,start_line,end_line,NoHeaderLines=1,NoInfoColumns=3,NoOpti
 				}
 			} 
 		}
-	}
+#	}
 
 	snpData=list("ID"=ID,"counts"=counts,"seq_depth"=seq_depth,"timeVector"=X)
 	return(snpData)

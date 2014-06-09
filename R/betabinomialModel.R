@@ -27,6 +27,13 @@
 betabinomialModel <-
 function(counts,seq_depth,x,rising=1) {
 
+	# Remove the SNPs with zero coverage, i.e. zero sequencing depth:
+	ind_nonzero=which(seq_depth!=0)
+	counts=as.matrix(counts[ind_nonzero])
+	seq_depth=as.matrix(seq_depth[ind_nonzero])
+	x=as.matrix(x[ind_nonzero])
+	#
+
 	if (is.unsorted(x)==TRUE) {	
 		order_ind=order(x)
 		counts=as.matrix(counts[order_ind])

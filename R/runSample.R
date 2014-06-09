@@ -25,7 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 runSample <-
-function(timePoints,dataFileName,start_line,end_line,resultFileName,plots_path,thr=10) {
+function(timePoints="all",dataFileName,start_line,end_line,resultFileName,plots_path,thr=10) {
 
 ####################################################################################################
 ##  											          ##
@@ -54,8 +54,6 @@ function(timePoints,dataFileName,start_line,end_line,resultFileName,plots_path,t
 	source("loadBBGP.R")
 	loadBBGP()
 
-	current_path=getwd()
-
 	snpData=readCountsData(dataFileName,start_line,end_line)
 	COUNTS=snpData$counts
 	SEQ_DEPTH=snpData$seq_depth
@@ -66,31 +64,41 @@ function(timePoints,dataFileName,start_line,end_line,resultFileName,plots_path,t
 	BayesFactors=matrix(0,N,1)	
 	SNP=matrix("",N,1)
 
-	ind_selectedTimePoints=which(X %in% timePoints)
-	X=as.matrix(X[ind_selectedTimePoints])
-
+	if (timePoints[1]!="all") {
+		ind_selectedTimePoints=which(X %in% timePoints)
+		X=as.matrix(X[ind_selectedTimePoints])
+		COUNTS=as.matrix(COUNTS[,ind_selectedTimePoints])
+		SEQ_DEPTH=as.matrix(SEQ_DEPTH[,ind_selectedTimePoints])
+	}
 
 
 	for (i in 1:N) {
 
-		counts=as.matrix(COUNTS[i,ind_selectedTimePoints])
-		seq_depth=as.matrix(SEQ_DEPTH[i,ind_selectedTimePoints])
+		counts=as.matrix(COUNTS[i,])
+		seq_depth=as.matrix(SEQ_DEPTH[i,])
+
 		bb_model=betabinomialModel(counts,seq_depth,X)
 		x=bb_model$timeVector
 		y=bb_model$posteriorMean
 		v=bb_model$posteriorVariance
 
-		rslt=bbgp_test(x,y,v)
-		BayesFactors[i]=rslt$BF
-		SNP[i]=SNP_ID[i]
+                if ((range(y)[2]-range(y)[1])==0) {
+                    BayesFactors[i]=NA
+                    } else {
+                    rslt=bbgp_test(x,y,v)
+                    BayesFactors[i]=rslt$BF
+                }
 
+		SNP[i]=SNP_ID[i]
 
 		if (nargs()>5) {
 			if (BayesFactors[i] > thr) {
 				model0=rslt$independentModel
 				model1=rslt$dependentModel
-				modelfitPlot(plots_path,model0,SNP_ID[i])
-				modelfitPlot(plots_path,model1,SNP_ID[i])
+				plot_name=paste(plots_path,SNP_ID[i],"_model0",".pdf",sep="")
+				modelfitPlot(model0,plot_name)
+				plot_name=paste(plots_path,SNP_ID[i],"_model1",".pdf",sep="")
+				modelfitPlot(model1,plot_name)
 			}	
 		}
 	
@@ -100,6 +108,5 @@ function(timePoints,dataFileName,start_line,end_line,resultFileName,plots_path,t
 	names(d)=c("SNP_ID","Bayes Factor")
 	writeOutputFile(resultFileName,d)
 
-	setwd(current_path)
 
 }
