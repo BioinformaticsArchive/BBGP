@@ -83,10 +83,12 @@ function(timePoints="all",dataFileName,start_line,end_line,resultFileName,plots_
 		v=bb_model$posteriorVariance
 
                 if ((range(y)[2]-range(y)[1])==0) {
-                    BayesFactors[i]=NA
-                    } else {
-                    rslt=bbgp_test(x,y,v)
-                    BayesFactors[i]=rslt$BF
+			BayesFactors[i]=NA
+		} else {
+			indModelCovTypes=c("white","fixedvariance")
+			depModelCovTypes=c("rbf","white","fixedvariance")
+			rslt=bbgp_test(x,y,v,indModelCovTypes,depModelCovTypes)
+			BayesFactors[i]=rslt$BF
                 }
 
 		SNP[i]=SNP_ID[i]

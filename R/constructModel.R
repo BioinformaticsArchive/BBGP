@@ -25,14 +25,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 constructModel <-
-function (x,y,covarianceTypes,v) {
+function (x,y,v,covarianceTypes) {
 
         list_covTypes=list()
 
         if ("rbf" %in% covarianceTypes) {
 		l_bound = calculateLbound(x)
 		iw_bound=1/(l_bound^2)
-		list_rbf=list(type="rbf",options=list(inverseWidthBounds=c(0,iw_bound)))
+		list_rbf=list(type="rbf",options=list(inverseWidthBounds=c((1/(tail(x,1)^2)),iw_bound)))
 		list_covTypes=append(list_covTypes,list(list_rbf))
 	}
         if ("bias" %in% covarianceTypes) {

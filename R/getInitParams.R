@@ -25,69 +25,48 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 getInitParams <-
-function (model,sigma2n) {
+function (model) {
 
-	if (nargs()<2) {
-		grid_size=10
-		sigma2n_search_range=seq(-20,20,length=grid_size)
-		LogLik=matrix(0,grid_size)
+	no_of_params=model$kern$nParams
+	grid_size=5
 
-		for(i in 1:grid_size)
-		{
-			sigma2n=sigma2n_search_range[i]
-			model1 = gpExpandParam(model, c(sigma2n))
-			LogLik[i] = gpLogLikelihood(model1)
-		}
-
-		ind_maxLogLik=which.max(LogLik)
-		sigma2n_updated=sigma2n_search_range[ind_maxLogLik]
-		initial_params=c(sigma2n_updated)
+	no_of_kernels=length(model$kern$comp)
+	paramNames=list()
+	for (i in 1:no_of_kernels) {
+		paramNames=append(paramNames,model$kern$comp[[i]]$paramNames)
 	}
-	else {
-		grid_size=5
-		iw_bound= model$kern$comp[[1]]$options$inverseWidthBounds[2]
-		iw_search_range=seq((log(0.01)),(log(iw_bound)),length=grid_size)
-		sigma2f_search_range=seq(-10,10,length=grid_size)
-		sigma2n_search_range=seq((log(sigma2n)-5),(log(sigma2n)+5),length=grid_size)
-		LogLik=matrix()
-		I=matrix()
-		K=matrix()
-		J=matrix()
-		vec_size=grid_size^3;
-		for(k in 1:grid_size)
-			{
-			for(j in 1:grid_size)
-			{	
-				for(i in 1:grid_size)
-				{
-					
-					iw=iw_search_range[k]
-					sigma2f=sigma2f_search_range[j]
-					sigma2n=sigma2n_search_range[i]
-					model1 = gpExpandParam(model, c(iw, sigma2f,sigma2n))
-					LogLik = rbind(LogLik,gpLogLikelihood(model1))
-					K=rbind(K,k)
-					J=rbind(J,j)
-					I=rbind(I,i)
-				
-				}
-			}
-		}	
 
-		LogL=LogLik[2:(vec_size+1)]
-		ind_maxLogLik=which.max(LogL)
-		i=I[(ind_maxLogLik+1)]
-		j=J[(ind_maxLogLik+1)]
-		k=K[(ind_maxLogLik+1)]
+	paramLims=list()
 
-		iw_updated=iw_search_range[k]	
-		sigma2f_updated=sigma2f_search_range[j]	
-		sigma2n_updated=sigma2n_search_range[i]
+	if ("inverseWidth" %in% paramNames) {
+		iw_ind=which(paramNames=="inverseWidth")		
+		iw_bound=model$kern$comp[[iw_ind]]$options$inverseWidthBounds
+		paramLims[[iw_ind]]=seq((log(iw_bound[1])),(log(iw_bound[2])),length=grid_size)
+	}
+
+	var_ind=which(paramNames=="variance")
+	for (i in 1:length(var_ind)) {
+		paramLims[[var_ind[i]]]=seq(-10,1,length=grid_size)
+	}
+
+	gridPoints=expand.grid(paramLims)
 	
-		initial_params=c(iw_updated,sigma2f_updated,sigma2n_updated)
+	lenGrid=nrow(gridPoints)
+
+	if (no_of_params!=ncol(gridPoints)) {
+		print("Not all of the parameters are included in the grid search.")
+		initial_params=c()
+	} else {
+		LogLik=matrix(0,lenGrid,1)
+		for (i in 1:lenGrid) {
+			model1 = gpExpandParam(model, as.vector(as.matrix(gridPoints[i,])))
+			LogLik[i] = gpLogLikelihood(model1)
+		}	
+		ind_maxLogLik=which.max(LogLik)
+		initial_params=as.vector(as.matrix(gridPoints[ind_maxLogLik,]))
 	}
 
 	return(initial_params)
 
-}
 
+}

@@ -25,9 +25,9 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 bbgp_test <-
-function(x,y,v) {
+function(x,y,v,indModelCovTypes,depModelCovTypes) {
 
-	model=constructModel(x,y,c("white","fixedvariance"),v)	
+	model=constructModel(x,y,v,indModelCovTypes)	
 	params_init=getInitParams(model)
 	model = modelExpandParam(model,params_init)		
 	model0 = gpOptimise(model, 0)	
@@ -35,8 +35,8 @@ function(x,y,v) {
         LogLik0=gpLogLikelihood(model0)
 	white_var=model0$kern$comp[[1]]$variance
 
-	model=constructModel(x,y,c("rbf","white","fixedvariance"),v)	
-	params_init=getInitParams(model,white_var)
+	model=constructModel(x,y,v,depModelCovTypes)	
+	params_init=getInitParams(model)
 	model = modelExpandParam(model,params_init)		
 	model1 = gpOptimise(model, 0)	
 	
