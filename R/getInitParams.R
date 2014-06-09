@@ -40,8 +40,8 @@ function (model) {
 
 	if ("inverseWidth" %in% paramNames) {
 		iw_ind=which(paramNames=="inverseWidth")		
-		iw_bound=model$kern$comp[[iw_ind]]$options$inverseWidthBounds
-		paramLims[[iw_ind]]=seq((log(iw_bound[1])),(log(iw_bound[2])),length=grid_size)
+		iw_bounds=model$kern$comp[[iw_ind]]$options$inverseWidthBounds
+		paramLims[[iw_ind]]=seq((log(iw_bounds[1])),(log(iw_bounds[2])),length=grid_size)
 	}
 
 	var_ind=which(paramNames=="variance")

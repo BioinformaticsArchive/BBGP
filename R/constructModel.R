@@ -31,8 +31,9 @@ function (x,y,v,covarianceTypes) {
 
         if ("rbf" %in% covarianceTypes) {
 		l_bound = calculateLbound(x)
-		iw_bound=1/(l_bound^2)
-		list_rbf=list(type="rbf",options=list(inverseWidthBounds=c((1/(tail(x,1)^2)),iw_bound)))
+		iw_upperbound=1/(l_bound^2)
+		iw_lowerbound=1/(tail(x,1)^2)
+		list_rbf=list(type="rbf",options=list(inverseWidthBounds=c(iw_lowerbound,iw_upperbound)))
 		list_covTypes=append(list_covTypes,list(list_rbf))
 	}
         if ("bias" %in% covarianceTypes) {
