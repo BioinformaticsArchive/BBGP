@@ -59,7 +59,7 @@ function(dataFileName,start_line,end_line,NoHeaderLines=1,NoInfoColumns=3,NoOpti
 			if (length(ind_nonzero)>2) {
 				print(sprintf("SNP on line %d is not bi-allelic. Check the data file.", i+start_line-1))
 			} else {
-				allele_counts=countsMatrix[ind_nonzero,]
+                                allele_counts=countsMatrix[ind_nonzero, ,drop=FALSE]
 				counts[i,]=allele_counts[1,]
 				if (length(ind_nonzero)<2) {
 					seq_depth[i,]=counts[i,]+0	
