@@ -26,8 +26,8 @@
 
 modelfitPlot <-
 function(model,file_name) {
-	#current_path=getwd()
-	#setwd(plots_path)	
+	
+	fv=0
 	x=model$X
 	y=model$y
 	no_of_kernels=length(model$kern$comp)
@@ -39,6 +39,9 @@ function(model,file_name) {
 		fv=1
 		ind_fixedvar_kern=which(kernTypes=="fixedvariance")
 		v=model$kern$comp[[ind_fixedvar_kern]]$fixedvariance
+                if (dim(v)[2]!=1) {
+                   v=diag(v)
+                   }
 	}
 
 	#model_name=deparse(substitute(model))
@@ -47,7 +50,19 @@ function(model,file_name) {
 	xtest = matrix(seq(-0.5, tail(x,1)+0.5, length = 100), ncol = 1)
 	Kx = kernCompute(model$kern, x, xtest)
 	ypredMean = t(Kx)%*%invK%*%model$m+(rep(mean(model$y),dim(xtest)[1],1))
-	ypredVar = kernDiagCompute(model$kern$comp[[1]], xtest) - rowSums((t(Kx)%*%invK)*t(Kx))
+	#ypredVar = kernDiagCompute(model$kern$comp[[1]], xtest) - rowSums((t(Kx)%*%invK)*t(Kx))
+	if ("white" %in% kernTypes) {
+		ind_white_kern=which(kernTypes=="white")
+		ypredVar = kernDiagCompute(model$kern$comp[[ind_white_kern]], xtest) - rowSums((t(Kx)%*%invK)*t(Kx))
+	}
+	if ("rbf" %in% kernTypes) {
+		ind_rbf_kern=which(kernTypes=="rbf")
+		ypredVar= kernDiagCompute(model$kern$comp[[ind_rbf_kern]], xtest) - rowSums((t(Kx)%*%invK)*t(Kx))
+	}
+        if ("bias" %in% kernTypes) {
+	   ind_bias_kern=which(kernTypes=="bias")
+           ypredVar = ypredVar + kernDiagCompute(model$kern$comp[[ind_bias_kern]], xtest) 
+        } 
 	lower=ypredMean-2*sqrt(ypredVar)
 	upper=ypredMean+2*sqrt(ypredVar)
 	L0=gpLogLikelihood(model)
@@ -56,10 +71,12 @@ function(model,file_name) {
 	FONTSIZE <- 10
 	#file_name=paste(SNP_name,"_",model_name,".pdf",sep="")
 	pdf(file=file_name, width=86/25.4, height=70/25.4)
+	#png(file=file_name)
 	par(ps=FONTSIZE, cex=1)
 	par(mar=c(2, 2, 0, 0)+0.4)
 	par(mgp=c(1.5, 0.5, 0))
 	plot(xtest,ypredMean,type='l',ylim=c(0,1),xlim=c(head(x,1)-0.5,tail(x,1)+0.5),col='black',xlab="Time",ylab="Frequencies",axes = FALSE,cex.main=1)
+        #plot(xtest,ypredMean,type='l',ylim=c(0,1),xlim=c(head(x,1)-0.5,tail(x,1)+0.5),col='black',xlab="Time",ylab="Frequencies",axes=FALSE)
 	polygon(c(xtest, rev(xtest)), c(upper, rev(ypredMean)), col = "grey", border = NA)
 	polygon(c(xtest, rev(xtest)), c(ypredMean, rev(lower)), col = "grey", border = NA)	
 	lines(xtest,lower,lty=2,col='black')
@@ -71,33 +88,33 @@ function(model,file_name) {
         lu=length(x_1)
         num_of_unique=as.matrix(as.vector(table(x))) 
 	
-        if (diff(range(num_of_unique))==0) {      
+        if (diff(range(num_of_unique))==0) {
            yy=matrix(y,num_of_unique[1],lu)
-    	   vv=matrix(v,num_of_unique[1],lu)
            sh=seq(from=(0-((num_of_unique[1]-1)*0.5)/2) ,to=(0+((num_of_unique[1]-1)*0.5)/2), by=0.5)
-		for (zz in seq(1,num_of_unique[1])) {
-		     sh1=sh[zz]
-		     points(x_1+sh1,yy[zz,],col='black',pch=20)
-		     if (fv==1) {
-			    errbar(as.vector(x_1+sh1), as.vector(yy[zz,]), yplus=as.vector(yy[zz,]+2*sqrt(vv[zz,])), yminus=as.vector(yy[zz,]-2*sqrt(vv[zz,])),add=TRUE,col='black')
-		     }
-		     lines(x_1+sh1,yy[zz,],lty=1,col='black')
-	       }
+                for (zz in seq(1,num_of_unique[1])) {
+                     sh1=sh[zz]
+                     points(x_1+sh1,yy[zz,],col='black',pch=20)
+                     if (fv==1) {
+                            vv=matrix(v,num_of_unique[1],lu)
+                            errbar(as.vector(x_1+sh1), as.vector(yy[zz,]), yplus=as.vector(yy[zz,]+2*sqrt(vv[zz,])), yminus=as.vector(yy[zz,]-2*sqrt(vv[zz,])),add=TRUE,col='black')
+                     }
+                     lines(x_1+sh1,yy[zz,],lty=1,col='black')
+               }
         } else {
-		no_of_prev=0
-		for (lu1 in (1:lu)) {
-			yy=matrix(y[(no_of_prev+1):(no_of_prev+num_of_unique[lu1])])
-			vv=matrix(v[(no_of_prev+1):(no_of_prev+num_of_unique[lu1])])
-			sh=seq(from=(0-((num_of_unique[lu1]-1)*0.5)/2) ,to=(0+((num_of_unique[lu1]-1)*0.5)/2), by=0.5)
-			no_of_prev=no_of_prev+num_of_unique[lu1]
-			for (zz in seq(1,num_of_unique[lu1])) {
-				sh1=sh[zz]
-				points(x_1[lu1]+sh1,yy[zz],col='black',pch=20)
-				if (fv==1) {
-					errbar(as.vector(x_1[lu1]+sh1), as.vector(yy[zz]), yplus=as.vector(yy[zz]+2*sqrt(vv[zz])), yminus=as.vector(yy[zz]-2*sqrt(vv[zz])),add=TRUE,col='black')
-				}
-			}
-		}
+                no_of_prev=0
+                for (lu1 in (1:lu)) {
+                        yy=matrix(y[(no_of_prev+1):(no_of_prev+num_of_unique[lu1])])
+                        sh=seq(from=(0-((num_of_unique[lu1]-1)*0.5)/2) ,to=(0+((num_of_unique[lu1]-1)*0.5)/2), by=0.5)
+                        for (zz in seq(1,num_of_unique[lu1])) {
+                                sh1=sh[zz]
+                                points(x_1[lu1]+sh1,yy[zz],col='black',pch=20)
+                                if (fv==1) {
+                                        vv=matrix(v[(no_of_prev+1):(no_of_prev+num_of_unique[lu1])])
+                                        errbar(as.vector(x_1[lu1]+sh1), as.vector(yy[zz]), yplus=as.vector(yy[zz]+2*sqrt(vv[zz])), yminus=as.vector(yy[zz]-2*sqrt(vv[zz])),add=TRUE,col='black')
+                                }
+                        }
+                        no_of_prev=no_of_prev+num_of_unique[lu1]
+                }
 	}
 
 	tex=substitute(paste("Log-likelihood: ",d),list(d=round(L0,digits=2)))
@@ -106,5 +123,5 @@ function(model,file_name) {
 	axis(side = 2)
 	#box()
 	dev.off()
-	#setwd(current_path)
+
 }

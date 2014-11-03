@@ -24,43 +24,67 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-betabinomialModel <-
-function(counts,seq_depth,x,rising=1) {
+biasKernParamInit <-
+function (kern) {
 
-	# Remove the time points at which the SNP has zero coverage, i.e. zero sequencing depth:
-	ind_nonzero=which(seq_depth!=0)
-	counts=as.matrix(counts[ind_nonzero])
-	seq_depth=as.matrix(seq_depth[ind_nonzero])
-	x=as.matrix(x[ind_nonzero])
-	#
+        kern$variance=exp(-2)
+        kern$nParams=1
+        kern$transforms=list(list(index=c(1),type="positive"))
+        kern$isStationary=TRUE
+	kern$paramNames="variance"
 
-	if (is.unsorted(x)==TRUE) {	
-		order_ind=order(x)
-		counts=as.matrix(counts[order_ind])
-		seq_depth=as.matrix(seq_depth[order_ind])
-		x=as.matrix(x[order_ind])
-	}
+        return(kern)
+}
 
-	rising_allele_counts=counts
 
-	if (rising==1) {
-		R=as.matrix(as.vector(table(x))) # number of replicates corresponding to time points in x
+biasKernExtractParam <-
+function (kern,only.values=TRUE,untransformed.values=TRUE) {
 
-	        if (mean(head((rising_allele_counts/seq_depth),R[1]))>mean(tail((rising_allele_counts/seq_depth),tail(R,1)))) { 
-	           rising_allele_counts=seq_depth-rising_allele_counts # adjustment for choosing the rising allele
-	        }	
-	}
+        params=c(kern$variance)
+        if (!only.values)
+        names(params)=c("variance")
 
-	alpha=1
-	beta=1
+        return(params)
+}
 
- 	y=(alpha+rising_allele_counts)/(alpha+beta+seq_depth)
-        v=((alpha+rising_allele_counts)*(1+seq_depth-rising_allele_counts))/((alpha+beta+seq_depth)^2*(alpha+beta+seq_depth+1))
-        y=as.matrix(y)
-	v=as.matrix(v)
+biasKernExpandParam <-
+function (kern, params) {
 
-	bb_list=list("posteriorMean"=y, "posteriorVariance"=v, "timeVector"=x)
+        kern$variance=params[1]
 
-	return(bb_list)
+        return(kern)
+}
 
+biasKernCompute <-
+function (kern, x, x2=NULL) {
+        if ( nargs() < 3 ) {
+                dims <- c(dim(as.array(x))[1], dim(as.array(x))[1])
+        } else {
+                dims <- c(dim(as.array(x))[1], dim(as.array(x2))[1])
+        }
+
+        k=matrix(kern$variance,nrow=dims[1],ncol=dims[2])
+
+
+        return(k)
+}
+
+
+
+biasKernGradient <-
+function (kern,x,x2,covGrad) {
+
+        if ( nargs()==3 ) {
+                covGrad <- x2
+        }
+
+        g=matrix(sum(covGrad),1,1)
+
+        return(g)
+}
+
+biasKernDiagCompute <-
+function (kern, x) {
+        k <- matrix(kern$variance, dim(as.array(x))[1], 1)
+        return (k)
 }
